@@ -1,6 +1,12 @@
-import { Controller, Post, UseGuards, Request, HttpCode, HttpStatus, Body, ValidationPipe } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  HttpCode,
+  HttpStatus,
+  Body,
+  ValidationPipe,
+} from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { Public } from './public.decorator';
 import { CreateUserDto } from 'src/users/dto/create-user.dto';
 
 @Controller('auth')

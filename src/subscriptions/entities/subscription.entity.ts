@@ -1,6 +1,12 @@
 import { Event } from '../../events/entities/event.entity';
 import { User } from '../../users/entities/user.entity';
-import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  ManyToOne,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 
 export enum SubscriptionType {
   TEAM = 'team',

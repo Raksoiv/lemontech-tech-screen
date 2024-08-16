@@ -7,22 +7,22 @@ export class AppController {
   async search(@Request() req: any) {
     const url = `${liveScoreConstants.SEARCH_API}?query=${req.query.q}&limit=10&locale=en&countryCode=CL&categories=true&stages=true&teams=true`;
     const response = await fetch(url, {
-      method: "GET",
+      method: 'GET',
       headers: {
-        "Content-Type": "application/json",
+        'Content-Type': 'application/json',
       },
     });
 
-    var result: {[k: string]: any} = {
+    const result: { [k: string]: any } = {
       Teams: [],
-    }
+    };
     const data = await response.json();
 
     data.Teams.forEach((team: any) => {
       result.Teams.push({
         path: team.ID,
         name: team.Nm,
-        type: "team",
+        type: 'team',
       });
     });
 
