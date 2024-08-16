@@ -6,6 +6,8 @@ import { UsersModule } from './users/users.module';
 import { JwtAuthGuard } from './auth/jwt-auth.guard';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule } from '@nestjs/config';
+import { SubscriptionsModule } from './subscriptions/subscriptions.module';
+import { EventsModule } from './events/events.module';
 
 @Module({
   imports: [
@@ -22,8 +24,10 @@ import { ConfigModule } from '@nestjs/config';
     }),
     AuthModule,
     UsersModule,
+    SubscriptionsModule,
+    EventsModule,
   ],
   controllers: [AppController],
-  providers: [AppService, { provide: 'APP_GUARD', useClass: JwtAuthGuard }],
+  providers: [AppService],
 })
 export class AppModule {}
