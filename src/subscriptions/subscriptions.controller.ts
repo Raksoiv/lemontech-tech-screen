@@ -5,10 +5,12 @@ import {
   Request,
   UseGuards,
   ValidationPipe,
+  Get,
+  Param,
 } from '@nestjs/common';
 import { SubscriptionsService } from './subscriptions.service';
 import { CreateSubscriptionDto } from './dto/create-subscription.dto';
-import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 
 @Controller('subscriptions')
 export class SubscriptionsController {

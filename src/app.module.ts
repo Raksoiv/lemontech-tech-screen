@@ -6,7 +6,9 @@ import { UsersModule } from './users/users.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule } from '@nestjs/config';
 import { SubscriptionsModule } from './subscriptions/subscriptions.module';
-import { EventsModule } from './events/events.module';
+import { TargetsModule } from './targets/targets.module';
+import { NotificationsModule } from './notifications/notifications.module';
+import { ScheduleModule } from '@nestjs/schedule';
 
 @Module({
   imports: [
@@ -24,7 +26,9 @@ import { EventsModule } from './events/events.module';
     AuthModule,
     UsersModule,
     SubscriptionsModule,
-    EventsModule,
+    TargetsModule,
+    NotificationsModule,
+    ScheduleModule.forRoot(),
   ],
   controllers: [AppController],
   providers: [AppService],
