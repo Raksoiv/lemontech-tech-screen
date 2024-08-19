@@ -10,19 +10,7 @@ import { UsersService } from '../users/users.service';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Target, TargetType } from './entities/target.entity';
 import { Repository } from 'typeorm';
-import { liveScoreConstants } from '../constants';
-
-function getChileanTime(): Date {
-  // Create a Date object in UTC
-  const utcDate = new Date();
-
-  // Calculate the time difference between UTC and Chile (adjust for DST if necessary)
-  const chileOffset = -3 * 60 * 60 * 1000; // -3 hours in milliseconds
-
-  // Create a new Date object with the Chilean time
-  const chileanDate = new Date(utcDate.getTime() + chileOffset);
-  return chileanDate;
-}
+import { dateConstants, liveScoreConstants } from '../constants';
 
 @Injectable()
 export class TargetsService {
@@ -49,7 +37,7 @@ export class TargetsService {
       for (const stage of data.Stages) {
         for (const event of stage.Events) {
           const date_str = event.Esd.toString();
-          const today = getChileanTime();
+          const today = dateConstants.CHILEAN_DATE();
           const todayStr = `${today.getFullYear()}${(today.getMonth() + 1).toString().padStart(2, '0')}${today.getDate().toString().padStart(2, '0')}`;
 
           if (date_str.startsWith(todayStr)) {
