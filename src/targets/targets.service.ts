@@ -1,17 +1,32 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Target, TargetType } from './entities/target.entity';
 import { Repository } from 'typeorm';
-import { dateConstants, liveScoreConstants } from '../constants';
+import {
+  cacheConstants,
+  dateConstants,
+  liveScoreConstants,
+} from '../constants';
+import { Cache } from 'cache-manager';
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
 
 @Injectable()
 export class TargetsService {
   constructor(
     @InjectRepository(Target)
     private targetRepository: Repository<Target>,
+    @Inject(CACHE_MANAGER) private cacheManager: Cache,
   ) {}
 
   async get_events(id: number) {
+    // Check if events for the target are cached
+    const cachedEvents = await this.cacheManager.get<any[]>(
+      `${cacheConstants.EVENTS_CACHE_KEY}${id}`,
+    );
+    if (cachedEvents) {
+      return cachedEvents;
+    }
+
     const target = await this.targetRepository.findOneBy({ id });
     if (!target) {
       throw new HttpException('Target not found', HttpStatus.NOT_FOUND);
@@ -38,6 +53,13 @@ export class TargetsService {
       }
     }
 
+    // Cache the events for the target
+    await this.cacheManager.set(
+      `${cacheConstants.EVENTS_CACHE_KEY}${id}`,
+      events,
+      cacheConstants.EVENTS_CACHE_TTL,
+    );
+
     return events;
   }
 
@@ -46,6 +68,15 @@ export class TargetsService {
       .createQueryBuilder('target')
       .leftJoinAndSelect('target.subscriptions', 'subscription')
       .where('subscription.active = true')
+      .getMany();
+  }
+
+  async findAllActiveUserSubscriptions(userId: number) {
+    return await this.targetRepository
+      .createQueryBuilder('target')
+      .leftJoinAndSelect('target.subscriptions', 'subscription')
+      .where('subscription.active = true')
+      .andWhere('subscription.userId = :userId', { userId })
       .getMany();
   }
 

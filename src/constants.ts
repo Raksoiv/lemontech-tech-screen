@@ -119,3 +119,10 @@ export const dateConstants = {
     );
   },
 };
+
+export const cacheConstants = {
+  NOTIFICATION_CACHE_KEY: 'notifications:',
+  NOTIFICATIONS_CACHE_TTL: 4 * 60 * 60 * 1000, // 4 hours in milliseconds
+  EVENTS_CACHE_KEY: 'events:',
+  EVENTS_CACHE_TTL: 60 * 60 * 1000, // 1 hour in milliseconds
+};

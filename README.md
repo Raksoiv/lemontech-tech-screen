@@ -37,10 +37,13 @@ DB_USER=
 DB_PASS=
 DB_NAME=
 
+REDIS_HOST=
+REDIS_PORT=
+
 JTW_SECRET=
 ```
 
-```.env.mysql
+```.env
 MYSQL_ROOT_PASSWORD=
 MYSQL_DATABASE=
 ```
@@ -135,6 +138,59 @@ Data:
 ### 5. Query the notifications
 
 Endpoint: `/notifications`
+
+Response:
+
+```
+{
+	"1244578": [
+		{
+			"text": "El partido entre Tijuana y Club Santos Laguna ha comenzado",
+			"new": true
+		},
+		{
+			"text": "Gol de Club Santos Laguna! Anthony Lozano asistido por Ramiro Sordo anotan el 1-0 contra el Tijuana en el minuto 14",
+			"new": true
+		},
+		{
+			"text": "Gol de Tijuana! Efrain Alvarez asistido por Unai Bilbao anotan el 1-1 contra el Club Santos Laguna en el minuto 28",
+			"new": true
+		},
+		{
+			"text": "Gol de Tijuana! Jose Zuniga anota el 2-1 contra el Club Santos Laguna en el minuto 45+8",
+			"new": true
+		},
+		{
+			"text": "Club Santos Laguna: Tarjeta roja para Santiago Nunez en el minuto 51",
+			"new": true
+		},
+		{
+			"text": "Club Santos Laguna: Tarjeta amarilla para Ramiro Sordo en el minuto 58",
+			"new": true
+		},
+		{
+			"text": "Club Santos Laguna: Tarjeta amarilla para Santiago Naveda en el minuto 69",
+			"new": true
+		},
+		{
+			"text": "Tijuana: Tarjeta amarilla para Ivan Tona en el minuto 74",
+			"new": true
+		},
+		{
+			"text": "Club Santos Laguna: Tarjeta amarilla para Salvador Mariscal en el minuto 76",
+			"new": true
+		},
+		{
+			"text": "Gol de Tijuana! Jaime Alvarez asistido por Gilberto Mora anotan el 3-1 contra el Club Santos Laguna en el minuto 90+6",
+			"new": true
+		}
+	]
+}
+```
+
+### 5. Create the notifications
+
+Endpoint: `/notifications/send`
 
 Response:
 

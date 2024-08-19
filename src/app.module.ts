@@ -9,6 +9,8 @@ import { SubscriptionsModule } from './subscriptions/subscriptions.module';
 import { TargetsModule } from './targets/targets.module';
 import { NotificationsModule } from './notifications/notifications.module';
 import { ScheduleModule } from '@nestjs/schedule';
+import { CacheModule } from '@nestjs/cache-manager';
+import { RedisOptions } from 'configs/redis.config';
 
 @Module({
   imports: [
@@ -23,12 +25,13 @@ import { ScheduleModule } from '@nestjs/schedule';
       autoLoadEntities: true,
       synchronize: true,
     }),
+    ScheduleModule.forRoot(),
+    CacheModule.register(RedisOptions),
     AuthModule,
     UsersModule,
     SubscriptionsModule,
     TargetsModule,
     NotificationsModule,
-    ScheduleModule.forRoot(),
   ],
   controllers: [AppController],
   providers: [AppService],

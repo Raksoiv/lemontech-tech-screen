@@ -1,7 +1,13 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { TargetsService } from '../targets/targets.service';
-import { dateConstants, liveScoreConstants } from '../constants';
+import {
+  cacheConstants,
+  dateConstants,
+  liveScoreConstants,
+} from '../constants';
 import { Notification } from './entities/notification.entity';
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
+import { Cache } from 'cache-manager';
 
 function parseIncident(
   notifications: Notification[],
@@ -219,7 +225,10 @@ function parseIncident(
 
 @Injectable()
 export class NotificationsService {
-  constructor(private readonly targetsService: TargetsService) {}
+  constructor(
+    private readonly targetsService: TargetsService,
+    @Inject(CACHE_MANAGER) private cacheManager: Cache,
+  ) {}
 
   //   @Cron(CronExpression.EVERY_MINUTE)
   async sendNotifications() {
@@ -285,7 +294,67 @@ export class NotificationsService {
           }
         }
 
-        eventNotifications[event] = notifications;
+        const savedNotifications =
+          await this.cacheManager.get<Notification[]>(event);
+        const newNotifications = notifications.filter((n) => {
+          const foundNotification = savedNotifications?.find(
+            (sn) => sn.text === n.text,
+          );
+          if (foundNotification) {
+            n.new = foundNotification.new;
+            return false;
+          }
+          return true;
+        });
+
+        // Send email notifications for new notifications
+        // for (const notification of newNotifications) {
+        //   await this.targetsService.sendEmailNotification(target.email, notification.text);
+        // }
+
+        // Send push notifications for new notifications
+        // for (const notification of newNotifications) {
+        //   await this.targetsService.sendPushNotification(target.pushToken, notification.text);
+        // }
+
+        // Save notifications to cache for 4 hours
+        await this.cacheManager.set(
+          event,
+          notifications,
+          cacheConstants.NOTIFICATIONS_CACHE_TTL,
+        );
+
+        eventNotifications[event] = newNotifications;
+      }
+    }
+
+    return eventNotifications;
+  }
+
+  async getNotifications(user_id: number) {
+    const targets =
+      await this.targetsService.findAllActiveUserSubscriptions(user_id);
+    const eventNotifications: { [key: number]: Notification[] } = {};
+
+    for (const target of targets) {
+      const events = await this.targetsService.get_events(target.id);
+      for (const event of events) {
+        const notifications =
+          await this.cacheManager.get<Notification[]>(event);
+        if (notifications) {
+          eventNotifications[event] = [...notifications];
+
+          // Mark notifications as new = false and save to cache
+          const updatedNotifications = notifications.map((n) => {
+            n.new = false;
+            return n;
+          });
+          this.cacheManager.set(
+            event,
+            updatedNotifications,
+            cacheConstants.NOTIFICATIONS_CACHE_TTL,
+          );
+        }
       }
     }
 

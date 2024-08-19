@@ -10,3 +10,6 @@ services:
     image: mysql:lts
     env_file:
       - .env.mysql
+
+  redis:
+    image: redis:alpine
