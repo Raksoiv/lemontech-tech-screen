@@ -62,6 +62,14 @@ export class TargetsService {
     return events;
   }
 
+  async findAllActiveSubscriptions() {
+    return await this.targetRepository
+      .createQueryBuilder('target')
+      .leftJoinAndSelect('target.subscriptions', 'subscription')
+      .where('subscription.active = true')
+      .getMany();
+  }
+
   // create(createTargetDto: CreateTargetDto) {
   //   return 'This action adds a new target';
   // }

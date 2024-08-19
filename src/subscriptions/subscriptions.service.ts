@@ -23,8 +23,8 @@ export class SubscriptionsService {
     private userService: UsersService,
   ) {}
 
-  async create(createSubscriptionDto: CreateSubscriptionDto, userJwt: User) {
-    const user = await this.userService.findOne(userJwt.id);
+  async create(createSubscriptionDto: CreateSubscriptionDto, userJwt: any) {
+    const user = await this.userService.findOne(userJwt.userId);
     if (!user) {
       throw new UnauthorizedException();
     }
@@ -41,19 +41,49 @@ export class SubscriptionsService {
       await this.targetRepository.save(target);
     }
 
-    const subscriptions = await this.subscriptionRepository.findBy({
+    let subscription = await this.subscriptionRepository.findOneBy({
       target: target,
       user: user,
     });
-    if (subscriptions.length > 0) {
-      return subscriptions;
+    if (subscription) {
+      await this.subscriptionRepository.update(subscription.id, {
+        active: true,
+      });
+      subscription.active = true;
+      return subscription;
     }
-    const subscription = this.subscriptionRepository.create();
+    subscription = this.subscriptionRepository.create();
     subscription.user = user;
     subscription.target = target;
     await this.subscriptionRepository.save(subscription);
 
-    return [subscription];
+    return subscription;
+  }
+
+  async remove(id: number, userJwt: any) {
+    const user = await this.userService.findOne(userJwt.userId);
+    if (!user) {
+      throw new UnauthorizedException();
+    }
+
+    // const subscription = await this.subscriptionRepository.findOneBy({ id });
+    const subscription = await this.subscriptionRepository
+      .createQueryBuilder('subscription')
+      .leftJoinAndSelect('subscription.user', 'user')
+      .where('subscription.id = :id', { id })
+      .getOne();
+    if (!subscription) {
+      throw new HttpException('Subscription not found', HttpStatus.NOT_FOUND);
+    } else if (subscription.user.id !== user.id) {
+      throw new UnauthorizedException();
+    } else if (subscription.active) {
+      await this.subscriptionRepository.update(subscription.id, {
+        active: false,
+      });
+      subscription.active = false;
+    }
+
+    return subscription;
   }
 
   // findAll() {
@@ -66,9 +96,5 @@ export class SubscriptionsService {
 
   // update(id: number, updateSubscriptionDto: UpdateSubscriptionDto) {
   //   return `This action updates a #${id} subscription`;
-  // }
-
-  // remove(id: number) {
-  //   return `This action removes a #${id} subscription`;
   // }
 }
