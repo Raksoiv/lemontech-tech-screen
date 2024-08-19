@@ -25,6 +25,7 @@ export class AppService {
       result.Teams.push({
         path: team.ID,
         name: team.Nm,
+        country: team.CoNm,
         type: 'team',
       });
     }
