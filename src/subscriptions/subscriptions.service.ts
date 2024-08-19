@@ -5,13 +5,11 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { CreateSubscriptionDto } from './dto/create-subscription.dto';
-import { User } from '../users/entities/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Subscription } from './entities/subscription.entity';
 import { DeepPartial, Repository } from 'typeorm';
 import { UsersService } from '../users/users.service';
-import { liveScoreConstants } from '../constants';
-import { Target, TargetType } from '../targets/entities/target.entity';
+import { Target } from '../targets/entities/target.entity';
 
 @Injectable()
 export class SubscriptionsService {
@@ -30,7 +28,7 @@ export class SubscriptionsService {
     }
 
     // Check if the target exist else create it
-    var target = await this.targetRepository.findOneBy({
+    let target = await this.targetRepository.findOneBy({
       path: createSubscriptionDto.path,
     });
     if (!target) {

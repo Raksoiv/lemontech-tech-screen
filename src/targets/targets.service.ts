@@ -1,12 +1,4 @@
-import {
-  HttpException,
-  HttpStatus,
-  Injectable,
-  UnauthorizedException,
-} from '@nestjs/common';
-import { CreateTargetDto } from './dto/create-target.dto';
-import { UpdateTargetDto } from './dto/update-target.dto';
-import { UsersService } from '../users/users.service';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Target, TargetType } from './entities/target.entity';
 import { Repository } from 'typeorm';
@@ -17,7 +9,6 @@ export class TargetsService {
   constructor(
     @InjectRepository(Target)
     private targetRepository: Repository<Target>,
-    private userService: UsersService,
   ) {}
 
   async get_events(id: number) {

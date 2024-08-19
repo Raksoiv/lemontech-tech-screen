@@ -1,73 +1,186 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="200" alt="Nest Logo" /></a>
-</p>
+# NotyFutbol
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+NotyFutbol is an API built using TypeScript and the NestJS framework. It provides live score data and allows users to subscribe to teams and receive notifications about match events.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+## Features
 
-## Description
+- Simple Sign Up: Requires only email and password.
+- Global Team Search: Find teams from around the world.
+- Team Subscriptions: Subscribe to any team and receive notifications.
+- Notification Management: Pull and view notifications about subscribed teams.
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
 
-## Installation
+## Planned Features
+- League and Competition Subscriptions: Subscribe to leagues and competitions for broader coverage.
+- Team, League, and Competition Statistics: Review detailed statistics.
+- Improved Quality Assurance: Implement a testing suite for comprehensive checks.
+- Continuous Integration: Leverage Github Actions for continuous integration.
 
-```bash
-$ yarn install
+## Build and deploy
+
+The API uses a `docker-compose.yml` file to manage all required components.
+
+### Environment Files:
+
+Two environment files are needed:
+
+- .env: Stores general configuration values like database credentials and JWT secret.
+- .env.mysql: Stores MySQL-specific configuration values like root password and database name.
+
+Ensure both files share matching values to facilitate communication between services.
+
+Example of them:
+
+```.env
+DB_HOST=
+DB_USER=
+DB_PASS=
+DB_NAME=
+
+JTW_SECRET=
 ```
 
-## Running the app
-
-```bash
-# development
-$ yarn run start
-
-# watch mode
-$ yarn run start:dev
-
-# production mode
-$ yarn run start:prod
+```.env.mysql
+MYSQL_ROOT_PASSWORD=
+MYSQL_DATABASE=
 ```
 
-## Test
+### Running the API:
 
-```bash
-# unit tests
-$ yarn run test
+- Prerequisites: Docker needs to be installed and running.
+- Command: Execute docker-compose up in your terminal.
 
-# e2e tests
-$ yarn run test:e2e
+## Usage
 
-# test coverage
-$ yarn run test:cov
+API Documentation: After building the API, access Swagger documentation at /api/.
+
+## Use Case / Test Case
+
+This section outlines steps to test core functionalities:
+
+### 1. Create user
+
+Endpoint: `/auth/signup`
+
+Data:
+
+```
+{
+  "email": "oscar@test.cl",
+  "password": "changeme"
+}
 ```
 
-## Support
+### 2. Login
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+Endpoint: `/auth/signin`
 
-## Stay in touch
+Data:
 
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+```
+{
+  "email": "oscar@test.cl",
+  "password": "changeme"
+}
+```
 
-## License
+Response:
 
-Nest is [MIT licensed](LICENSE).
+```
+{
+  "access_token": "<token>"
+}
+```
+
+### 3. Search teams
+
+Endpoint: `/search?q=<team>`
+
+Response:
+
+```
+{
+	"Teams": [
+		{
+			"path": "2901",
+			"name": "Leicester City",
+			"country": "England",
+			"type": "team"
+		},
+		{
+			"path": "186658",
+			"name": "Leicester Road",
+			"country": "England",
+			"type": "team"
+		}
+  ]
+}
+```
+
+### 4. Subscribe to a team
+
+Endpoint: `/subscriptions`
+
+Data:
+
+```
+{
+  "path": "2901",
+  "name": "Leicester City",
+  "country": "England",
+  "type": "team"
+}
+```
+
+### 5. Query the notifications
+
+Endpoint: `/notifications`
+
+Response:
+
+```
+{
+	"1244578": [
+		{
+			"text": "El partido entre Tijuana y Club Santos Laguna ha comenzado",
+			"new": true
+		},
+		{
+			"text": "Gol de Club Santos Laguna! Anthony Lozano asistido por Ramiro Sordo anotan el 1-0 contra el Tijuana en el minuto 14",
+			"new": true
+		},
+		{
+			"text": "Gol de Tijuana! Efrain Alvarez asistido por Unai Bilbao anotan el 1-1 contra el Club Santos Laguna en el minuto 28",
+			"new": true
+		},
+		{
+			"text": "Gol de Tijuana! Jose Zuniga anota el 2-1 contra el Club Santos Laguna en el minuto 45+8",
+			"new": true
+		},
+		{
+			"text": "Club Santos Laguna: Tarjeta roja para Santiago Nunez en el minuto 51",
+			"new": true
+		},
+		{
+			"text": "Club Santos Laguna: Tarjeta amarilla para Ramiro Sordo en el minuto 58",
+			"new": true
+		},
+		{
+			"text": "Club Santos Laguna: Tarjeta amarilla para Santiago Naveda en el minuto 69",
+			"new": true
+		},
+		{
+			"text": "Tijuana: Tarjeta amarilla para Ivan Tona en el minuto 74",
+			"new": true
+		},
+		{
+			"text": "Club Santos Laguna: Tarjeta amarilla para Salvador Mariscal en el minuto 76",
+			"new": true
+		},
+		{
+			"text": "Gol de Tijuana! Jaime Alvarez asistido por Gilberto Mora anotan el 3-1 contra el Club Santos Laguna en el minuto 90+6",
+			"new": true
+		}
+	]
+}
+```

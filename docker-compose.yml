@@ -1,0 +1,12 @@
+services:
+  api:
+    build:
+      context: .
+      dockerfile: ./.docker/api.Dockerfile
+    ports:
+      - "3001:3000"
+
+  mysql:
+    image: mysql:lts
+    env_file:
+      - .env.mysql

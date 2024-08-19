@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { TargetsService } from '../targets/targets.service';
-import { Cron, CronExpression } from '@nestjs/schedule';
 import { dateConstants, liveScoreConstants } from '../constants';
 import { Notification } from './entities/notification.entity';
 
@@ -10,7 +9,7 @@ function parseIncident(
   teams: { [key: number]: string },
 ) {
   if (incident.IT === 36) {
-    var min = String(incident.Min);
+    let min = String(incident.Min);
     if (incident.MinEx) {
       min += '+' + String(incident.MinEx);
     }
@@ -40,7 +39,7 @@ function parseIncident(
       });
     }
   } else if (incident.IT === 37) {
-    var min = String(incident.Min);
+    let min = String(incident.Min);
     if (incident.MinEx) {
       min += '+' + String(incident.MinEx);
     }
@@ -70,7 +69,7 @@ function parseIncident(
       });
     }
   } else if (incident.IT === 38) {
-    var min = String(incident.Min);
+    let min = String(incident.Min);
     if (incident.MinEx) {
       min += '+' + String(incident.MinEx);
     }
@@ -100,10 +99,10 @@ function parseIncident(
       });
     }
   } else if (incident.Incs) {
-    var scorer, teamScoring, assist;
-    var min = '';
+    let scorer, teamScoring, assist;
+    let min = '';
     for (const subIncident of incident.Incs) {
-      var min = String(subIncident.Min);
+      min = String(subIncident.Min);
       if (subIncident.MinEx) {
         min += '+' + String(subIncident.MinEx);
       }
@@ -190,7 +189,7 @@ function parseIncident(
       });
     }
   } else if (incident.IT === 43) {
-    var min = String(incident.Min);
+    let min = String(incident.Min);
     if (incident.MinEx) {
       min += '+' + String(incident.MinEx);
     }
@@ -203,7 +202,7 @@ function parseIncident(
       new: true,
     });
   } else if (incident.IT === 45) {
-    var min = String(incident.Min);
+    let min = String(incident.Min);
     if (incident.MinEx) {
       min += '+' + String(incident.MinEx);
     }
@@ -229,14 +228,14 @@ export class NotificationsService {
 
     for (const target of targets) {
       const events = await this.targetsService.get_events(target.id);
-      for (var event of events) {
+      for (const event of events) {
         console.log(`Creating notification for event ${event}`);
-        var scoreResult = await fetch(
+        const scoreResult = await fetch(
           liveScoreConstants.EVENT_SCORE_API_GEN(event),
         );
-        var scoreData = await scoreResult.json();
+        const scoreData = await scoreResult.json();
 
-        var teams: { [key: number]: string } = {
+        const teams: { [key: number]: string } = {
           1: scoreData.T1[0].Nm,
           2: scoreData.T2[0].Nm,
         };
@@ -244,8 +243,6 @@ export class NotificationsService {
         const startTime = dateConstants.LIVESCORE_DATE(String(scoreData.Esd));
         const now = new Date();
         if (startTime > now) {
-          console.log([startTime, now]);
-          console.log('Event has not started yet - skipping');
           continue;
         }
 

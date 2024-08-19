@@ -1,5 +1,4 @@
 import { Controller, Get, Request } from '@nestjs/common';
-import { liveScoreConstants } from './constants';
 import { AppService } from './app.service';
 
 @Controller()
